@@ -14,16 +14,252 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          client_email: string
+          client_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          occurred_at: string
+          status: string
+          subscription_id: string | null
+        }
+        Insert: {
+          client_email: string
+          client_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          status?: string
+          subscription_id?: string | null
+        }
+        Update: {
+          client_email?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          status?: string
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          client_code: string
+          created_at: string
+          current_subscription_id: string | null
+          full_name: string
+          id: string
+          join_date: string
+          notes: string | null
+          phone: string | null
+          photo_url: string | null
+          user_email: string
+        }
+        Insert: {
+          client_code: string
+          created_at?: string
+          current_subscription_id?: string | null
+          full_name: string
+          id?: string
+          join_date?: string
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          user_email: string
+        }
+        Update: {
+          client_code?: string
+          created_at?: string
+          current_subscription_id?: string | null
+          full_name?: string
+          id?: string
+          join_date?: string
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_current_subscription_fkey"
+            columns: ["current_subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coach_allowlist: {
+        Row: {
+          email: string
+        }
+        Insert: {
+          email: string
+        }
+        Update: {
+          email?: string
+        }
+        Relationships: []
+      }
+      packages: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          duration_days: number
+          id: string
+          package_name: string
+          price: number
+          total_sessions: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          duration_days: number
+          id?: string
+          package_name: string
+          price?: number
+          total_sessions: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          package_name?: string
+          price?: number
+          total_sessions?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          photo_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          photo_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          photo_url?: string | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          client_id: string
+          created_at: string
+          end_date: string
+          id: string
+          package_id: string | null
+          start_date: string
+          status: string
+          total_sessions: number
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          package_id?: string | null
+          start_date?: string
+          status?: string
+          total_sessions: number
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          package_id?: string | null
+          start_date?: string
+          status?: string
+          total_sessions?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      current_email: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +386,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+    },
   },
 } as const
